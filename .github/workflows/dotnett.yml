@@ -1,28 +1,32 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# Azure DevOps Pipeline Configuration
 
-name: .NETtt 
+trigger:
+  branches:
+    include:
+      - main  # Trigger on commits to the main branch
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+pr:
+  branches:
+    include:
+      - main  # Trigger on pull requests targeting the main branch
 
-jobs:
-  build:
+pool:
+  vmImage: 'ubuntu-latest'  # Use the latest Ubuntu VM image
 
-    runs-on: ubuntu-latest
+steps:
+- checkout: self  # Check out the repository code
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+- task: UseDotNet@2  # Install the .NET SDK
+  inputs:
+    packageType: 'sdk'  # Specify that we want to install the SDK
+    version: '8.x'  # Install the latest 8.x version of the SDK
+    installationPath: $(Agent.ToolsDirectory)/dotnet  # Set the installation path
+
+- script: dotnet restore  # Restore project dependencies
+  displayName: 'Restore dependencies'
+
+- script: dotnet build --no-restore  # Build the project without restoring dependencies
+  displayName: 'Build'
+
+- script: dotnet test --no-build --verbosity normal  # Run tests without building
+  displayName: 'Test'
