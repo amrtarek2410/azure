@@ -1,0 +1,49 @@
+trigger:
+- main
+
+pool:
+  name: default
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+jobs:
+- job: Build
+  displayName: 'Build job'
+  steps:
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '8.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - script: |
+      dotnet build --configuration $(buildConfiguration)
+    displayName: 'Build with dotnet'
+
+  - script: |
+      dotnet publish -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)/myapp
+    displayName: 'dotnet publish'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/myapp'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
+
+- job: Deploy
+  displayName: 'Deploy job'
+  dependsOn: Build
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - download: current
+    artifact: drop
+
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: 'amrtest'
+      appType: 'webAppLinux'
+      appName: 'devops-webapp'
+      package: '$(Pipeline.Workspace)/drop'
