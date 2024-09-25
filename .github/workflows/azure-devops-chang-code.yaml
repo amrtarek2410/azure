@@ -36,6 +36,7 @@ jobs:
   displayName: 'Deploy job'
   dependsOn: Build
   pool:
+    name: Default
     vmImage: 'ubuntu-latest'
   steps:
   - download: current
