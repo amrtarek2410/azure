@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "No dependencies needed for Hello World!"
+  build:
+    commands:
+      - echo "Running Hello World script..."
+      - python hello.py  # Replace with your command (e.g., node hello.js)
+artifacts:
+  files: "**/*"  # Optional: Include this if you need output files
