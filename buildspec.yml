@@ -3,9 +3,17 @@ phases:
   install:
     commands:
       - echo "No dependencies needed for Hello World!"
+      # Install SonarScanner
+      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+      - unzip sonar-scanner-*.zip -d /opt
+      - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
   build:
     commands:
       - echo "Running Hello World script..."
       - python hello.py  # Replace with your command (e.g., node hello.js)
-artifacts:
-  files: "**/*"  # Optional: Include this if you need output files
+      # Run SonarQube analysis with ENV variables
+      - sonar-scanner
+        -Dsonar.projectKey=amr-test
+        -Dsonar.host.url=http://3.129.73.100:9000  # Hardcoded URL
+        -Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f  # Hardcoded token
+        
