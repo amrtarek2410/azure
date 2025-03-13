@@ -7,8 +7,14 @@ phases:
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
   pre_build:
     commands:
-      - echo "Testing SonarQube connection..."
-      - curl -v http://3.129.73.100:9000/api/system/status
+      # Test connectivity and authentication (optional but recommended)
+      - echo "Testing SonarQube connection and token..."
+      - curl -v -u ${SONARQUBE_TOKEN}: http://3.129.73.100:9000/api/system/status
   build:
     commands:
-      - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.129.73.100:9000 -Dsonar.login=sqp_YOUR_NEW_TOKEN -Dsonar.sources=.
+      # Run SonarScanner with the new token
+      - sonar-scanner \
+      - Dsonar.projectKey=amr-test \
+      - Dsonar.host.url=http://3.129.73.100:9000 \
+      - Dsonar.login=sqp_15739d44549cbc9cf642ec67e0745952d3613a04 \
+      - Dsonar.sources=.
