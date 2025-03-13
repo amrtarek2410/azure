@@ -5,11 +5,7 @@ phases:
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
-  pre_build:
-    commands:
-      # Test connectivity and authentication (optional but recommended)
-      - echo "Testing SonarQube connection and token..."
-      - curl -v -u ${SONARQUBE_TOKEN}: http://3.129.73.100:9000/api/system/status
+
   build:
     commands:
       # Run SonarScanner with the new token
