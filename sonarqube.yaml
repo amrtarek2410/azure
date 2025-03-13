@@ -5,12 +5,12 @@ phases:
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
-
   build:
     commands:
-      # Run SonarScanner with the new token
-      - sonar-scanner \
-      - Dsonar.projectKey=amr-test \
-      - Dsonar.host.url=http://3.129.73.100:9000 \
-      - Dsonar.login=sqp_15739d44549cbc9cf642ec67e0745952d3613a04 \
-      - Dsonar.sources=.
+      # Multi-line command with quotes
+      - >-
+        sonar-scanner
+        -Dsonar.projectKey=amr-test
+        -Dsonar.host.url=http://3.129.73.100:9000
+        -Dsonar.login=sqp_15739d44549cbc9cf642ec67e0745952d3613a04
+        -Dsonar.sources=.
