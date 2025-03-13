@@ -3,3 +3,4 @@ phases:
   install:
     commands:
       - echo "heloooooooooooo amooooooooooraaaaaaaa"
+      - python hello.py 
