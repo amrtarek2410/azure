@@ -5,11 +5,10 @@ phases:
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+  pre_build:
+    commands:
+      - echo "Testing SonarQube connection..."
+      - curl -v http://3.129.73.100:9000/api/system/status
   build:
     commands:
-      # Run SonarQube analysis (fix indentation)
-      - sonar-scanner \
-        -Dsonar.projectKey=amr-test \
-        -Dsonar.host.url=http://3.129.73.100:9000 \
-        -Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f \
-        -Dsonar.sources=.
+      - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.129.73.100:9000 -Dsonar.login=sqp_YOUR_NEW_TOKEN -Dsonar.sources=.
