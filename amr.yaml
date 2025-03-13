@@ -1,1 +1,5 @@
-echo "helllo amoooor"
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "heloooooooooooo amooooooooooraaaaaaaa"
