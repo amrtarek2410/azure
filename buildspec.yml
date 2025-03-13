@@ -13,7 +13,7 @@ phases:
       - python hello.py  # Replace with your command (e.g., node hello.js)
       # Run SonarQube analysis with ENV variables
       - sonar-scanner
-        -Dsonar.projectKey=amr-test
-        -Dsonar.host.url=http://3.129.73.100:9000  # Hardcoded URL
-        -Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f  # Hardcoded token
+      - Dsonar.projectKey=amr-test
+      - Dsonar.host.url=http://3.129.73.100:9000  # Hardcoded URL
+      - Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f  # Hardcoded token
         
