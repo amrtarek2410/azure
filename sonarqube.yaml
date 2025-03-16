@@ -10,7 +10,7 @@ phases:
       # Multi-line command with quotes
       - >-
         sonar-scanner
-        -Dsonar.projectKey=amr-test
-        -Dsonar.host.url=http://3.129.73.100:9000
-        -Dsonar.login=sqp_c97cc9a515e7643898cb47c5ae01eff9e1087e1b
+        -Dsonar.projectKey=amr-test   #project name
+        -Dsonar.host.url=http://3.146.35.25:9000    #add public ip xxxxx:9000
+        -Dsonar.login=sqp_c97cc9a515e7643898cb47c5ae01eff9e1087e1b     # token from sonarqube
         -Dsonar.sources=.
