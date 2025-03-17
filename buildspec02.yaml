@@ -1,1 +1,26 @@
 
+version: 0.2
+phases:
+  install:
+    commands:
+      - apt-get update -y
+      - apt-get install -y maven openjdk-17-jdk
+      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+      - unzip sonar-scanner-*.zip -d /opt
+      - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+
+  pre_build:
+    commands:
+      - mvn clean test
+
+  build:
+    commands:
+      - sonar-scanner
+        -Dsonar.projectKey=data-processor-java
+        -Dsonar.host.url=http://18.224.55.83:9000
+        -Dsonar.login=sqp_7c522efefa152b51581dbc078c8427f88ee2654f
+        -Dsonar.sources=src/main/java
+        -Dsonar.tests=src/test/java
+        -Dsonar.java.binaries=target/classes
+        -Dsonar.junit.reportPaths=target/surefire-reports
+        -Dsonar.jacoco.reportPaths=target/jacoco.exec
