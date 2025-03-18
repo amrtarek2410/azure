@@ -32,7 +32,5 @@ phases:
         -Dsonar.login=sqp_c52209701ffcc223a786c49d0db0f8142fa100a7
         -Dsonar.sources=.
         -Dsonar.python.coverage.reportPaths=coverage.xml
-        -Dsonar.sources=user_manager.py
-        -Dsonar.tests=test_user_manager.py
-        -Dsonar.test.inclusions=test_user_manager.py
+    
 
