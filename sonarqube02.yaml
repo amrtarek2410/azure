@@ -28,8 +28,7 @@ phases:
       # Quality Gate check (strict format)
       - >-
         QG_STATUS=$(curl -s -u sqp_7d760d846bc1b7bf46098443339c4ef823017908:
-        "http://18.117.119.200:9000/api/qualitygates/project_status?projectKey=amr-test"
-        | jq -r .projectStatus.status)
+        "http://18.117.119.200:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r .projectStatus.status)
       - echo "Quality Gate Status: $QG_STATUS"
       - if [ "$QG_STATUS" != "passed" ]; then echo "Quality Gate Failed!"; exit 1; fi
       - echo "Quality Gate Passed! Continuing build..."
