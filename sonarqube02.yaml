@@ -9,7 +9,7 @@ phases:
       # Install SonarScanner
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
-      - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH
+      - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
 
       - pip3 install psycopg2-binary coverage
 
