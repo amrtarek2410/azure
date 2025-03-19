@@ -32,10 +32,7 @@ phases:
       # Generate XML coverage report
       - coverage xml
       
-      -Dsonar.projectKey=database-handler
-
-
-      # Run SonarQube analysis with coverage
+        -Dsonar.projectKey=database-handler
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test
