@@ -1,0 +1,44 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      # Install dependencies
+      - apt-get update -y
+      - apt-get install -y jq  # For JSON parsing
+      - pip3 install coverage
+
+      # Install SonarScanner
+      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+      - unzip sonar-scanner-*.zip -d /opt
+      - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
+
+  pre_build:
+    commands:
+      # Run tests and generate coverage
+      - coverage run -m unittest discover -s . -p "test_*.py"
+
+  build:
+    commands:
+      # Generate coverage report
+      - coverage xml
+
+      # Run SonarQube analysis
+      - sonar-scanner
+        -Dsonar.projectKey=amr-test
+        -Dsonar.host.url=http://18.117.119.200:9000
+        -Dsonar.login=sqp_7d760d846bc1b7bf46098443339c4ef823017908
+        -Dsonar.sources=.
+        -Dsonar.python.coverage.reportPaths=coverage.xml
+
+      # Wait for analysis to complete (adjust sleep time as needed)
+      - sleep 30
+
+      # Check Quality Gate status via API
+      - >-
+        QG_STATUS=$(curl -s -u sqp_7d760d846bc1b7bf46098443339c4ef823017908: 
+        "$SONARQUBE_HOST_URL/api/qualitygates/project_status?projectKey=your-project-key" 
+        | jq -r .projectStatus.status)
+      - echo "Quality Gate Status: $QG_STATUS"
+
+      # Fail build if Quality Gate fails
+      - if [ "$QG_STATUS" != "OK" ]; then exit 1; fi
