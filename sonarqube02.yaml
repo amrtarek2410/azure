@@ -3,15 +3,14 @@ phases:
   install:
     commands:
       # Install Python and dependencies
-      - apt-get update && apt-get install -y python3 python3-pip
-      - pip3 install coverage  # Required for test coverage analysis
-      
+      - apt-get update -y
+      - apt-get install -y jq python3 python3-pip
+      - pip3 install coverage psycopg2-binary  # Required for test coverage analysis
+
       # Install SonarScanner
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
-
-      - pip3 install psycopg2-binary coverage
 
   pre_build:
     commands:
@@ -23,7 +22,7 @@ phases:
     commands:
       # Generate XML coverage report
       - coverage xml
-      
+
       # Run SonarScanner
       - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://18.117.119.200:9000 -Dsonar.login=sqp_7d760d846bc1b7bf46098443339c4ef823017908 -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.qualitygate.wait=true
 
