@@ -35,5 +35,6 @@ phases:
   post_build:
     commands:
       # Check and print quality gate status
-      - QG_STATUS=$(curl -s -u sqp_a2967e11fd2274239b965d007d70e2c399422fb9: http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test | jq -r '.projectStatus.status')
-      - if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
+      - >
+        QG_STATUS=$(curl -s -u sqp_a2967e11fd2274239b965d007d70e2c399422fb9: http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test | jq -r '.projectStatus.status')
+        if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
