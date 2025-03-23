@@ -31,8 +31,8 @@ phases:
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test
-        -Dsonar.host.url=http://18.117.119.200:9000
-        -Dsonar.login=sqp_7d760d846bc1b7bf46098443339c4ef823017908
+        -Dsonar.host.url=http://3.16.139.210:9000
+        -Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f
         -Dsonar.sources=.
         -Dsonar.python.coverage.reportPaths=coverage.xml
       
