@@ -11,6 +11,6 @@ phases:
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test  
-        -Dsonar.host.url=http://18.117.119.200:9000    
-        -Dsonar.login=sqp_7d760d846bc1b7bf46098443339c4ef823017908
+        -Dsonar.host.url=http://3.16.139.210:9000    
+        -Dsonar.login=sqp_5295281f651d2060061b37c56f512753b23621c0
         -Dsonar.sources=.
