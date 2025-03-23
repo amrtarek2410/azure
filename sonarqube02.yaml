@@ -28,12 +28,12 @@ phases:
         sonar-scanner
         -Dsonar.projectKey=amr-test
         -Dsonar.host.url=http://3.16.139.210:9000
-        -Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f
+        -Dsonar.login=sqp_5295281f651d2060061b37c56f512753b23621c0
         -Dsonar.sources=.
         -Dsonar.python.coverage.reportPaths=coverage.xml
 
   post_build:
     commands:
       - >-
-        QG_STATUS=$(curl -s -u sqp_a2967e11fd2274239b965d007d70e2c399422fb9: "http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
+        QG_STATUS=$(curl -s -u sqp_5295281f651d2060061b37c56f512753b23621c0: "http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
         if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
