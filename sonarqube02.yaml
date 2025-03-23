@@ -16,7 +16,7 @@ phases:
   build:
     commands:
       - coverage xml
-      - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.16.139.210:9000 -Dsonar.token=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.qualitygate.wait=true -X
+      - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.16.139.210:9000 -Dsonar.token=sqp_a2967e11fd2274239b965d007d70e2c399422fb9 -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.qualitygate.wait=true -X
 
   post_build:
     commands:
