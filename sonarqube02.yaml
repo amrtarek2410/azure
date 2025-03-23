@@ -16,8 +16,9 @@ phases:
   build:
     commands:
       - coverage xml
-      - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.16.139.210:9000 -Dsonar.token=sqp_a2967e11fd2274239b965d007d70e2c399422fb9 -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.qualitygate.wait=true -X || echo "Quality gate failed" && exit 1
+      - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.16.139.210:9000 -Dsonar.token=sqp_a2967e11fd2274239b965d007d70e2c399422fb9 -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.qualitygate.wait=true -X
 
   post_build:
     commands:
-      - echo "Build completed successfully!"
+      - QG_STATUS=$(curl -s -u sqp_a2967e11fd2274239b965d007d70e2c399422fb9: http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test | jq -r '.projectStatus.status')
+      - if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
