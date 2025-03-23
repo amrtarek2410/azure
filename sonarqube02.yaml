@@ -2,30 +2,24 @@ version: 0.2
 phases:
   install:
     commands:
-      # Install Python and dependencies
-      - apt-get update && apt-get install -y python3 python3-pip
-      - pip3 install coverage  # Required for test coverage analysis
-      
+      # Install required tools
+      - apt-get update && apt-get install -y python3 python3-pip jq
+      - pip3 install coverage psycopg2-binary
+
       # Install SonarScanner
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
 
-      - pip3 install psycopg2-binary coverage
-
   pre_build:
     commands:
-      # Run unit tests with coverage tracking
       - coverage run -m unittest discover -s . -p "test_*.py"
-      - coverage report  # Debug coverage
+      - coverage report
 
   build:
     commands:
-      # Generate XML coverage report
       - coverage xml
-      
-      - >-
-        sonar-scanner
+      - sonar-scanner
         -Dsonar.projectKey=amr-test
         -Dsonar.host.url=http://3.16.139.210:9000
         -Dsonar.token=sqp_a2967e11fd2274239b965d007d70e2c399422fb9
@@ -34,7 +28,10 @@ phases:
 
   post_build:
     commands:
-      - >
-        QG_STATUS=$(curl -s -u sqp_a2967e11fd2274239b965d007d70e2c399422fb9: http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test | jq -r '.projectStatus.status')
-        if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
-        
+      # Check quality gate status with debugging
+      - echo "Checking quality gate status..."
+      - API_RESPONSE=$(curl -s -u sqp_a2967e11fd2274239b965d007d70e2c399422fb9: "http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test")
+      - echo "Raw API response: $API_RESPONSE"
+      - QG_STATUS=$(echo $API_RESPONSE | jq -r '.projectStatus.status')
+      - echo "Quality Gate Status: $QG_STATUS"
+      - if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; exit 0; else echo "Quality gate failed"; exit 1; fi
