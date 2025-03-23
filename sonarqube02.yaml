@@ -18,10 +18,6 @@ phases:
       - coverage xml
       - sonar-scanner -Dsonar.projectKey=amr-test -Dsonar.host.url=http://3.16.139.210:9000 -Dsonar.login=squ_8056cef7d6722a87d2fca6976d8e81d0338c179f -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.qualitygate.wait=true
 
-      # Quality Gate check
-      - QG_STATUS=$(curl -s -u squ_8056cef7d6722a87d2fca6976d8e81d0338c179f: "http://3.16.139.210:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r .projectStatus.status)
-      - echo "SonarQube Quality Gate Status: $QG_STATUS"
-
   post_build:
     commands:
       - echo "Build completed successfully!"
