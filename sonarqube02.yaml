@@ -31,9 +31,12 @@ phases:
         QG_STATUS=$(curl -s -u sqp_b98738fa7d33bf28149480a3f793c9eb8715d468: "http://3.137.161.44:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
         if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
 
-
 artifacts:
   files:
-  - '/**/*'
+    - '**/*'
   name: build-$(date +%Y-%m-%d-%H-%M-%S)
-  
+  discard-paths: yes
+  base-directory: build
+  s3:
+    bucket: amr-demooo
+    path: amr-artifacts
