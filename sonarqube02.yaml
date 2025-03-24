@@ -3,28 +3,19 @@ phases:
   install:
     commands:
       - apt-get update && apt-get install -y python3 python3-pip jq
-      - pip3 install coverage psycopg2-binary pytest
+      - pip3 install coverage psycopg2-binary
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
 
   pre_build:
     commands:
-      - mkdir -p test-reports
-      # Test execution with full error handling
-      - >
-        if [ -d "tests" ] && [ -n "$(find tests -name 'test_*.py')" ]; then
-          coverage run -m pytest --junitxml=test-reports/junit.xml tests/ || true
-          coverage report || echo "Coverage report failed but continuing..."
-        else
-          echo "No tests found: creating empty reports"
-          echo '<testsuites></testsuites>' > test-reports/junit.xml
-          echo "<?xml version='1.0' ?><coverage></coverage>" > coverage.xml
-        fi
+      - coverage run -m unittest discover -s . -p "test_*.py"
+      - coverage report
 
   build:
     commands:
-      - coverage xml -o coverage.xml  # Ensure XML output even if empty
+      - coverage xml
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test
@@ -32,18 +23,16 @@ phases:
         -Dsonar.login=sqp_b98738fa7d33bf28149480a3f793c9eb8715d468
         -Dsonar.sources=.
         -Dsonar.python.coverage.reportPaths=coverage.xml
-        -Dsonar.qualitygate.wait=true
+        -Dsonar.qualitygate.wait=true  # Add this parameter
 
   post_build:
     commands:
       - >-
         QG_STATUS=$(curl -s -u sqp_b98738fa7d33bf28149480a3f793c9eb8715d468: "http://3.137.161.44:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
-        if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
-
-artifacts:
-  files:
-    - coverage.xml
-    - test-reports/**/*
-    - target/sonar/report-task.txt
-  name: build-artifacts-$(date +%Y-%m-%d)
-  discard-paths: no
+        if [ "$QG_STATUS" = "OK" ]; then
+          echo "Quality gate passed";
+          aws s3 cp --recursive . s3://amr-demooo/amr-artifacts/;
+        else
+          echo "Quality gate failed";
+          exit 1;
+        fi
