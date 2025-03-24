@@ -10,23 +10,34 @@ phases:
 
   pre_build:
     commands:
+      - mkdir -p reports  # Create artifacts directory
       - coverage run -m unittest discover -s . -p "test_*.py"
-      - coverage report
+      - coverage report --omit="*/test*.py" > reports/coverage-summary.txt
 
   build:
     commands:
-      - coverage xml
+      - coverage xml -o reports/coverage.xml
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test
         -Dsonar.host.url=http://3.137.161.44:9000
         -Dsonar.login=sqp_b98738fa7d33bf28149480a3f793c9eb8715d468
         -Dsonar.sources=.
-        -Dsonar.python.coverage.reportPaths=coverage.xml
-        -Dsonar.qualitygate.wait=true  # Add this parameter
+        -Dsonar.python.coverage.reportPaths=reports/coverage.xml
+        -Dsonar.qualitygate.wait=true
 
   post_build:
     commands:
       - >-
         QG_STATUS=$(curl -s -u sqp_b98738fa7d33bf28149480a3f793c9eb8715d468: "http://3.137.161.44:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
+        echo "$QG_STATUS" > reports/qualitygate-status.txt
         if [ "$QG_STATUS" = "OK" ]; then echo "Quality gate passed"; else echo "Quality gate failed"; exit 1; fi
+
+artifacts:
+  files:
+    - reports/**/*
+    - sonar-project.properties
+    - tests/**/*.py
+  name: build-$(date +%Y-%m-%d-%H-%M-%S)
+  base-directory: .
+  discard-paths: no
