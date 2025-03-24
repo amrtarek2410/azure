@@ -36,7 +36,7 @@ artifacts:
     - '**/*'
   name: build-$(date +%Y-%m-%d-%H-%M-%S)
   discard-paths: yes
-  base-directory: build
+  base-directory: .
   s3:
     bucket: amr-demooo
     path: amr-artifacts
