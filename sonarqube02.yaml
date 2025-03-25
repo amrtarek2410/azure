@@ -19,8 +19,8 @@ phases:
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test
-        -Dsonar.host.url=http://3.137.161.44:9000
-        -Dsonar.login=sqp_b98738fa7d33bf28149480a3f793c9eb8715d468
+        -Dsonar.host.url=http://3.145.49.181:9000
+        -Dsonar.login=sqp_e460a26f098005288f06b3d78ea0a9f442b27757
         -Dsonar.sources=.
         -Dsonar.python.coverage.reportPaths=coverage.xml
         -Dsonar.qualitygate.wait=true
@@ -28,7 +28,7 @@ phases:
   post_build:
     commands:
       - >-
-        QG_STATUS=$(curl -s -u sqp_b98738fa7d33bf28149480a3f793c9eb8715d468: "http://3.137.161.44:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
+        QG_STATUS=$(curl -s -u sqp_e460a26f098005288f06b3d78ea0a9f442b27757: "http://3.145.49.181:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
         if [ "$QG_STATUS" = "OK" ]; then
           echo "Quality gate passed - preserving all files";
         else
