@@ -36,6 +36,7 @@ phases:
       - >-
         QG_STATUS=$(curl -s -u sqp_e460a26f098005288f06b3d78ea0a9f442b27757: "http://3.145.49.181:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
         if [ "${QG_STATUS}" = "OK" ]; then
+          TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S);
           mkdir -p "artifact-bundle-${TIMESTAMP}"
           find . -mindepth 1 -maxdepth 1 -not -name "artifact-bundle-*" -exec mv {} "artifact-bundle-${TIMESTAMP}/" \;
           echo "Quality gate passed - artifacts prepared";
