@@ -36,21 +36,21 @@ phases:
       - >-
         QG_STATUS=$(curl -s -u sqp_e460a26f098005288f06b3d78ea0a9f442b27757: "http://3.145.49.181:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
         if [ "${QG_STATUS}" = "OK" ]; then
-          mkdir -p "artifacts-${TIMESTAMP}";
-          find . -mindepth 1 -maxdepth 1 -not -name "artifacts-*" -exec mv {} "artifacts-${TIMESTAMP}/" \;
-          echo "Created artifact directory: artifacts-${TIMESTAMP}";
+          mkdir -p "artifacts/${TIMESTAMP}";
+          mv coverage.xml test-reports/ target/ "artifacts/${TIMESTAMP}/";
+          echo "Artifacts moved to: artifacts/${TIMESTAMP}";
         else
-          find . -mindepth 1 -maxdepth 1 -not -name 'src' -exec rm -rf {} \;
-          echo "Quality gate failed - no artifacts created";
+          rm -rf coverage.xml test-reports/ target/;
+          echo "Quality gate failed - artifacts removed";
           exit 1;
         fi
 
 artifacts:
   files:
-    - '**/*'
-  name: "build-${TIMESTAMP}"
+    - 'artifacts/**/*'
+  name: build-artifacts
   discard-paths: no
-  base-directory: "artifacts-${TIMESTAMP}"
+  base-directory: artifacts
   s3:
     bucket: amr-demooo
-    path: "amr-artifacts/${TIMESTAMP}"
+    path: amr-artifacts
