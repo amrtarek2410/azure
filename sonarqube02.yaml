@@ -7,19 +7,14 @@ phases:
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
-      - TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
-      - echo "TIMESTAMP=${TIMESTAMP}" > env_vars
 
   pre_build:
     commands:
-      - . ./env_vars
-      - echo "Using timestamp: ${TIMESTAMP}"
       - coverage run -m unittest discover -s . -p "test_*.py"
       - coverage report
 
   build:
     commands:
-      - . ./env_vars
       - coverage xml
       - >-
         sonar-scanner
@@ -32,26 +27,24 @@ phases:
 
   post_build:
     commands:
-      - . ./env_vars
       - >-
         QG_STATUS=$(curl -s -u sqp_e460a26f098005288f06b3d78ea0a9f442b27757: "http://3.145.49.181:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
-        if [ "${QG_STATUS}" = "OK" ]; then
-          TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S);
+        if [ "$QG_STATUS" = "OK" ]; then
+          echo "Quality gate passed - preparing artifacts";
           mkdir -p "artifact-bundle-${TIMESTAMP}"
-          find . -mindepth 1 -maxdepth 1 -not -name "artifact-bundle-*" -exec mv {} "artifact-bundle-${TIMESTAMP}/" \;
-          echo "Quality gate passed - artifacts prepared";
+          find . -mindepth 1 -maxdepth 1 -not -name artifact-bundle -exec mv {} "artifact-bundle-${TIMESTAMP}/" \;
         else
-          find . -mindepth 1 -maxdepth 1 -not -name 'src' -exec rm -rf {} \;
-          echo "Quality gate failed - artifacts cleaned";
+          echo "Quality gate failed - destroying all build outputs";
+          find . -mindepth 1 -maxdepth 1 -not -name 'src' -exec rm -rf {} \;;
           exit 1;
         fi
 
 artifacts:
   files:
     - '**/*'
-  name: build-success-${TIMESTAMP}
+  name: build-success-$(date +%Y-%m-%d-%H-%M-%S)
   discard-paths: no
   base-directory: artifact-bundle-${TIMESTAMP}
   s3:
     bucket: amr-demooo
-    path: amr-artifacts/${TIMESTAMP}
+    path: amr-artifacts
