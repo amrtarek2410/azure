@@ -9,16 +9,18 @@ phases:
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
       - TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
       - echo "TIMESTAMP=${TIMESTAMP}" > timestamp.env
+      - cat timestamp.env  # Verify file creation
 
   pre_build:
     commands:
-      - source timestamp.env
+      - . ./timestamp.env  # POSIX-compliant equivalent of 'source'
+      - echo "Using timestamp: ${TIMESTAMP}"
       - coverage run -m unittest discover -s . -p "test_*.py"
       - coverage report
 
   build:
     commands:
-      - source timestamp.env
+      - . ./timestamp.env
       - coverage xml
       - >
         sonar-scanner
@@ -31,25 +33,25 @@ phases:
 
   post_build:
     commands:
-      - source timestamp.env
+      - . ./timestamp.env
       - |
         QG_STATUS=$(curl -s -u sqp_102b7169fc001c55066ecfd3c41ceb60bd962f10: "http://52.15.229.182:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status')
-        if [ "$QG_STATUS" = "OK" ]; then
-          echo "Creating artifact directory: artifacts/$TIMESTAMP"
-          mkdir -p "artifacts/$TIMESTAMP"
-          mv coverage.xml test-reports/ target/ "artifacts/$TIMESTAMP/"
+        if [ "${QG_STATUS}" = "OK" ]; then
+          echo "Creating artifact directory: artifacts/${TIMESTAMP}";
+          mkdir -p "artifacts/${TIMESTAMP}";
+          mv coverage.xml test-reports/ target/ "artifacts/${TIMESTAMP}/";
         else
-          echo "Cleaning failed build outputs"
-          rm -rf coverage.xml test-reports/ target/
-          exit 1
+          echo "Cleaning failed build outputs";
+          rm -rf coverage.xml test-reports/ target/;
+          exit 1;
         fi
 
 artifacts:
   files:
-    - '**/*'
-  name: build-$TIMESTAMP
+    - 'artifacts/**/*'
+  name: build-${TIMESTAMP}
   discard-paths: no
   base-directory: artifacts
   s3:
     bucket: amr-demooo
-    path: amr-artifacts/$TIMESTAMP/
+    path: amr-artifacts/${TIMESTAMP}/
