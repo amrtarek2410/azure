@@ -7,21 +7,17 @@ phases:
       - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
       - unzip sonar-scanner-*.zip -d /opt
       - export PATH="/opt/sonar-scanner-5.0.1.3006-linux/bin:$PATH"
-      - TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
-      - echo "TIMESTAMP=${TIMESTAMP}" > timestamp.env
 
   pre_build:
     commands:
-      - . ./timestamp.env
-      - echo "Build timestamp: ${TIMESTAMP}"
       - coverage run -m unittest discover -s . -p "test_*.py"
       - coverage report
 
   build:
     commands:
-      - . ./timestamp.env
       - coverage xml
-      - sonar-scanner
+      - >-
+        sonar-scanner
         -Dsonar.projectKey=amr-test
         -Dsonar.host.url=http://52.15.229.182:9000
         -Dsonar.login=sqp_102b7169fc001c55066ecfd3c41ceb60bd962f10
@@ -31,25 +27,24 @@ phases:
 
   post_build:
     commands:
-      - . ./timestamp.env
-      - |
-        QG_STATUS=$(curl -s -u sqp_102b7169fc001c55066ecfd3c41ceb60bd962f10: "http://52.15.229.182:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status')
-        if [ "${QG_STATUS}" = "OK" ]; then
-          echo "Creating artifact directory: artifacts/${TIMESTAMP}"
-          mkdir -p "artifacts/${TIMESTAMP}"
-          mv coverage.xml test-reports/ target/ sonar-project.properties "artifacts/${TIMESTAMP}/"
+      - >-
+        QG_STATUS=$(curl -s -u sqp_102b7169fc001c55066ecfd3c41ceb60bd962f10: "http://52.15.229.182:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
+        if [ "$QG_STATUS" = "OK" ]; then
+          echo "Quality gate passed - preparing artifacts";
+          mkdir -p artifact-bundle;
+          find . -mindepth 1 -maxdepth 1 -not -name artifact-bundle -exec mv {} artifact-bundle/ \;;
         else
-          echo "Cleaning failed build outputs"
-          rm -rf coverage.xml test-reports/ target/
-          exit 1
+          echo "Quality gate failed - destroying all build outputs";
+          find . -mindepth 1 -maxdepth 1 -not -name 'src' -exec rm -rf {} \;;
+          exit 1;
         fi
 
 artifacts:
   files:
-    - 'artifacts/**/*'
-  name: build-${TIMESTAMP}
+    - '**/*'
+  name: build-success-$(date +%Y-%m-%d-%H-%M-%S)
   discard-paths: no
-  base-directory: artifacts
+  base-directory: artifact-bundle
   s3:
     bucket: amr-demooo
-    path: amr-artifacts/${TIMESTAMP}
+    path: amr-artifacts
