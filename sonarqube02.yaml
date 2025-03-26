@@ -47,4 +47,4 @@ artifacts:
   base-directory: artifact-bundle
   s3:
     bucket: amr-demooo
-    path: amr-artifacts-$(date +%Y-%m-%d-%H-%M-%S)
+    path: amr-artifacts/build-$(date +%Y-%m-%d-%H-%M-%S)
