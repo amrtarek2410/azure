@@ -19,8 +19,8 @@ phases:
       - >-
         sonar-scanner
         -Dsonar.projectKey=amr-test
-        -Dsonar.host.url=http://3.145.49.181:9000
-        -Dsonar.login=sqp_e460a26f098005288f06b3d78ea0a9f442b27757
+        -Dsonar.host.url=http://52.15.229.182:9000
+        -Dsonar.login=sqp_102b7169fc001c55066ecfd3c41ceb60bd962f10
         -Dsonar.sources=.
         -Dsonar.python.coverage.reportPaths=coverage.xml
         -Dsonar.qualitygate.wait=true
@@ -28,7 +28,7 @@ phases:
   post_build:
     commands:
       - >-
-        QG_STATUS=$(curl -s -u sqp_e460a26f098005288f06b3d78ea0a9f442b27757: "http://3.145.49.181:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
+        QG_STATUS=$(curl -s -u sqp_102b7169fc001c55066ecfd3c41ceb60bd962f10: "http://52.15.229.182:9000/api/qualitygates/project_status?projectKey=amr-test" | jq -r '.projectStatus.status');
         if [ "$QG_STATUS" = "OK" ]; then
           echo "Quality gate passed - preparing artifacts";
           mkdir -p artifact-bundle;
