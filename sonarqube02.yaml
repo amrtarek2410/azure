@@ -37,7 +37,6 @@ phases:
           echo "Quality gate failed - destroying all build outputs";
           find . -mindepth 1 -maxdepth 1 -not -name 'src' -exec rm -rf {} \;;
           exit 1;
-        fi
 
 artifacts:
   files:
@@ -47,4 +46,4 @@ artifacts:
   base-directory: artifact-bundle
   s3:
     bucket: amr-demooo
-    path: amr-artifacts
+    path: amr-artifacts/build-$(date +%Y-%m-%d-%H-%M-%S)
